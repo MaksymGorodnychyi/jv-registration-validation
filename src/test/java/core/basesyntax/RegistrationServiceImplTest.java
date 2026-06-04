@@ -1,5 +1,7 @@
 package core.basesyntax;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import core.basesyntax.db.Storage;
 import core.basesyntax.model.User;
@@ -7,9 +9,6 @@ import core.basesyntax.service.RegistrationService;
 import core.basesyntax.service.RegistrationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RegistrationServiceImplTest {
     private RegistrationService registrationService;
@@ -54,7 +53,7 @@ public class RegistrationServiceImplTest {
     @Test
     void register_shortLogin_notOk() {
         User user = new User();
-        user.setLogin("john");
+        user.setLogin("johnd");
         user.setPassword("qwerty123");
         user.setAge(20);
 
@@ -112,6 +111,42 @@ public class RegistrationServiceImplTest {
     }
 
     @Test
+    void register_emptyPassword_notOk() {
+        User user = new User();
+        user.setLogin("john12");
+        user.setPassword("");
+        user.setAge(20);
+
+        assertThrows(RegistrationException.class, () -> {
+            registrationService.register(user);
+        });
+    }
+
+    @Test
+    void register_passwordFiveChars_notOk() {
+        User user = new User();
+        user.setLogin("john12");
+        user.setPassword("pndrt");
+        user.setAge(20);
+
+        assertThrows(RegistrationException.class, () -> {
+            registrationService.register(user);
+        });
+    }
+
+    @Test
+    void register_passwordEightChars_ok() {
+        User user = new User();
+        user.setLogin("john12");
+        user.setPassword("pndrt123");
+        user.setAge(20);
+
+        User actual = registrationService.register(user);
+        assertEquals(user, actual);
+        assertEquals(1, Storage.people.size());
+    }
+
+    @Test
     void register_nullAge_notOk() {
         User user = new User();
         user.setLogin("john12");
@@ -129,6 +164,18 @@ public class RegistrationServiceImplTest {
         user.setLogin("john12");
         user.setPassword("qwerty");
         user.setAge(15);
+
+        assertThrows(RegistrationException.class, () -> {
+            registrationService.register(user);
+        });
+    }
+
+    @Test
+    void register_negativeAge_notOk() {
+        User user = new User();
+        user.setLogin("john12");
+        user.setPassword("qwerty");
+        user.setAge(-5);
 
         assertThrows(RegistrationException.class, () -> {
             registrationService.register(user);
