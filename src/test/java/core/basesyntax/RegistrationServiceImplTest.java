@@ -153,7 +153,7 @@ public class RegistrationServiceImplTest {
         existUser.setLogin("john123");
         existUser.setPassword("qwerty");
         existUser.setAge(20);
-        registrationService.register(existUser);
+        Storage.people.add(existUser);
 
         User newUser = new User();
         newUser.setLogin("john123");

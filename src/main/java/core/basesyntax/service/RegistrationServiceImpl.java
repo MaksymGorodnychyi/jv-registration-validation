@@ -15,22 +15,31 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public User register(User user) {
         if (user == null) {
-            throw new RegistrationException("Not fit");
+            throw new RegistrationException("User can't be null");
         }
         String login = user.getLogin();
-        if (login == null || login.length() < MIN_LOGIN_LENGTH) {
-            throw new RegistrationException("Not fit");
+        if (login == null) {
+            throw new RegistrationException("Login can't be null");
+        }
+        if (login.length() < MIN_LOGIN_LENGTH) {
+            throw new RegistrationException("Login length must be at least 6 characters");
         }
         String password = user.getPassword();
-        if (password == null || password.length() < MIN_PASSWORD_LENGTH) {
-            throw new RegistrationException("Not fit");
+        if (password == null) {
+            throw new RegistrationException("Password can't be null");
+        }
+        if (password.length() < MIN_PASSWORD_LENGTH) {
+            throw new RegistrationException("Password length must be at least 6 characters");
         }
         Integer age = user.getAge();
-        if (age == null || age < MIN_AGE) {
-            throw new RegistrationException("Not fit");
+        if (age == null) {
+            throw new RegistrationException("Age can't be null");
+        }
+        if (age < MIN_AGE) {
+            throw new RegistrationException("Age must be at least 18 years old");
         }
         if (storageDao.get(login) != null) {
-            throw new RegistrationException("Not fit");
+            throw new RegistrationException("User with login '" + login + "' already exists");
         }
         return storageDao.add(user);
     }
